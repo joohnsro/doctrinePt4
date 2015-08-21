@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 $app['clienteService'] = function () use ($em) {
     $clienteEntity = new Cliente();
     $clienteMapper = new ClienteMapper($em);
-    $clienteService = new ClienteService($clienteEntity, $clienteMapper);
+    $clienteService = new ClienteService($clienteEntity, $clienteMapper, $em);
     return $clienteService;
 };
 
@@ -22,6 +22,7 @@ $app['clienteService'] = function () use ($em) {
 
 $app->get("/api/clientes", function () use ($app) {
     $dados = $app['clienteService']->fetchAll();
+//    return print_r($dados);
     return $app->json($dados);
 });
 
@@ -53,7 +54,6 @@ $app->delete("/api/clientes/{id}", function ($id) use ($app) {
     $dados = $app['clienteService']->delete($id);
     return $app->json($dados);
 });
-
 
 $app->get("/", function() use ($app) {
     return $app['twig']->render('index.twig', []);

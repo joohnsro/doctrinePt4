@@ -16,17 +16,17 @@ class Cliente
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue
      */
-    private $id;
+    public $id;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $nome;
+    public $nome;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $email;
+    public $email;
 
     /**
      * @return mixed

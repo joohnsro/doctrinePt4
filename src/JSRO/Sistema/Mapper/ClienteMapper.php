@@ -7,7 +7,6 @@ use Doctrine\ORM\EntityManager;
 
 class ClienteMapper
 {
-
     private $em;
 
     public function __construct(EntityManager $em)
@@ -20,58 +19,22 @@ class ClienteMapper
         $this->em->persist($cliente);
         $this->em->flush();
 
-        return [
-            'id'      => $cliente->getId(),
-            'nome'    => $cliente->getNome(),
-            'email'   => $cliente->getEmail(),
-        ];
+        return true;
     }
 
-    public function update($id, $data)
+    public function update(Cliente $cliente)
     {
-        $query = $this->em->createQueryBuilder()
-            ->update('JSRO\Sistema\Entity\Cliente', 'c')
-            ->set('c.nome', ':nome')
-            ->set('c.email', ':email')
-            ->where('c.id = :id')
-            ->setParameter('id', $id)
-            ->setParameter('nome', $data['nome'])
-            ->setParameter('email', $data['email']);
+        $this->em->persist($cliente);
+        $this->em->flush();
 
-         $query->getQuery()->execute();
-
-        return $this->find($id);
+        return true;
     }
 
-    public function find($id)
+    public function delete(Cliente $cliente)
     {
-        $query = $this->em->createQueryBuilder()
-            ->select('c')
-            ->from('JSRO\Sistema\Entity\Cliente', 'c')
-            ->where('c.id = :id')
-            ->setParameter('id', $id);
+        $this->em->remove($cliente);
+        $this->em->flush();
 
-        return $query->getQuery()->getArrayResult();
+        return true;
     }
-
-    public function delete($id)
-    {
-        $query = $this->em->createQueryBuilder()
-            ->delete()
-            ->from('JSRO\Sistema\Entity\Cliente', 'c')
-            ->where('c.id = :id')
-            ->setParameter('id', $id);
-
-        return $query->getQuery()->execute();
-    }
-
-    public function fetchAll()
-    {
-        $query = $this->em->createQueryBuilder()
-            ->select('c')
-            ->from('JSRO\Sistema\Entity\Cliente', 'c');
-
-        return $query->getQuery()->getArrayResult();
-    }
-
 }
