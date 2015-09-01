@@ -3,14 +3,10 @@
 require_once __DIR__ . '/../bootstrap.php';
 
 use JSRO\Sistema\Service\ClienteService;
-use JSRO\Sistema\Entity\Cliente;
-use JSRO\Sistema\Mapper\ClienteMapper;
 use Symfony\Component\HttpFoundation\Request;
 
 $app['clienteService'] = function () use ($em) {
-    $clienteEntity = new Cliente();
-    $clienteMapper = new ClienteMapper($em);
-    $clienteService = new ClienteService($clienteEntity, $clienteMapper, $em);
+    $clienteService = new ClienteService($em);
     return $clienteService;
 };
 
@@ -55,28 +51,17 @@ $app->delete("/api/clientes/{id}", function ($id) use ($app) {
     return $app->json($dados);
 });
 
-$app->get("/", function() use ($app) {
-    return $app['twig']->render('index.twig', []);
-})->bind("index");
+$app->get("/", function (Request $request) use ($app){
 
-$app->get("/ola/{nome}", function($nome) use ($app) {
-    return $app['twig']->render('ola.twig', ['nome'=>$nome]);
-});
+    $search = [
+        'search' => $request->get('search'),
+        'limit'  => '',
+        'page'   => $request->get('page'),
+    ];
 
-$app->get("/clientes", function () use ($app){
-    $dados = $app['clienteService']->fetchAll();
-    return $app['twig']->render('clientes.twig', ['clientes'=>$dados]);
+    $dados = $app['clienteService']->getSearchResult($search);
+
+    return $app['twig']->render('clientes.twig', ['search' => $search, 'clientes'=>$dados['data'], 'info'=>$dados['info']]);
 })->bind("clientes");
-
-$app->get("/cliente", function () use ($app) {
-
-    $dados['nome'] = "Cliente";
-    $dados['email'] = "email@cliente.com";
-
-    $result = $app['clienteService']->insert($dados);
-
-    return $app->json($result);
-
-});
 
 $app->run();

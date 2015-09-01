@@ -1,13 +1,49 @@
 {% extends 'layout.twig' %}
 
-{% block aplicacao %}
+{% block title %}
     <h1>Clientes</h1>
 {% endblock %}
 
 {% block conteudo %}
-<ul>
-    {% for cliente in clientes %}
-        <li>{{ cliente.nome }} ({{ cliente.email }})</li>
-    {% endfor %}
-</ul>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>NOME</th>
+                <th>EMAIL</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for cliente in clientes %}
+                <tr>
+                    <td>{{ cliente.id }}</td>
+                    <td>{{ cliente.nome }}</td>
+                    <td>{{ cliente.email }}</td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="3" class="text-center">Nenhum resultado foi encontrado.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <p class="text-center text-muted">
+        {% if info['qtd_total'] > 1 %}
+            Foram encontrados {{ info['qtd_total'] }} resultados.
+        {% else %}
+            Foi encontrado {{ info['qtd_total'] }} resultado.
+        {% endif %}
+    </p>
+
+    {% if info['pages'] > 1 %}
+        <nav class="text-center">
+            <ul class="pagination">
+                {% for i in 1..info['pages'] %}
+                    <li {% if search['page'] == i or search['page'] is empty and i == 1 %}class="active"{% endif %}><a href="?search={{ search['search'] }}&limit={{ info['limit'] }}&page={{ i }}">{{ i }}</a></li>
+                {% endfor %}
+            </ul>
+        </nav>
+    {% endif %}
+
 {% endblock %}

@@ -5,7 +5,7 @@ namespace JSRO\Sistema\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="JSRO\Sistema\Entity\ClienteRepository")
  * @ORM\Table(name="clientes")
  */
 

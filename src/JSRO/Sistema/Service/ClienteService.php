@@ -2,74 +2,78 @@
 namespace JSRO\Sistema\Service;
 
 use Doctrine\ORM\EntityManager;
-use JSRO\Sistema\Entity\Cliente;
-use JSRO\Sistema\Mapper\ClienteMapper;
+use JSRO\Sistema\Entity\Cliente as ClienteEntity;
 
 class ClienteService
 {
-    private $cliente;
-    private $clienteMapper;
     private $em;
 
-    public function __construct(Cliente $cliente, ClienteMapper $clienteMapper, EntityManager $em)
+    public function __construct(EntityManager $em)
     {
-        $this->cliente = $cliente;
-        $this->clienteMapper = $clienteMapper;
         $this->em = $em;
     }
 
     public function insert(array $data)
     {
-        $this->cliente->setNome($data['nome']);
-        $this->cliente->setEmail($data['email']);
+        $clienteEntity = new ClienteEntity();
+        $clienteEntity->setNome($data['nome']);
+        $clienteEntity->setEmail($data['email']);
 
-        $this->clienteMapper->insert($this->cliente);
+        $this->em->persist($clienteEntity);
+        $this->em->flush();
 
-        return ['success' => true, 'data' => $this->cliente];
+        return $clienteEntity;
     }
 
     public function update($id, array $array)
     {
-        $cliente = $this->em->find('JSRO\Sistema\Entity\Cliente', $id);
-
-        if (!$cliente) {
-            return ['error' => 'O cliente não existe.'];
-        }
+        $cliente = $this->em->getReference('JSRO\Sistema\Entity\Cliente', $id);
 
         $cliente->setNome($array['nome']);
         $cliente->setEmail($array['email']);
 
-        $this->clienteMapper->update($cliente);
+        $this->em->persist($cliente);
+        $this->em->flush();
 
-        return ['success' => true, 'data' => $cliente];
+        return $cliente;
     }
 
     public function fetchAll()
     {
-        return $this->em->getRepository('JSRO\Sistema\Entity\Cliente')->findAll();
+        $repo = $this->em->getRepository('JSRO\Sistema\Entity\Cliente');
+        return $repo->findAll();
     }
 
     public function find($id)
     {
-        $cliente = $this->em->find('JSRO\Sistema\Entity\Cliente', $id);
-
-        if (!$cliente) {
-            return ['error' => 'O cliente não foi encontrado.'];
-        }
-
-        return ['success' => true, 'data' => $cliente];
+        $repo = $this->em->getRepository('JSRO\Sistema\Entity\Cliente');
+        return $repo->find($id);
     }
 
     public function delete($id)
     {
-        $cliente = $this->em->find('JSRO\Sistema\Entity\Cliente', $id);
+        $cliente = $this->em->getReference('JSRO\Sistema\Entity\Cliente', $id);
+        $this->em->remove($cliente);
+        return true;
+    }
 
-        if (!$cliente) {
-            return ['error' => 'O cliente não existe.'];
+    public function getSearchResult(array $search)
+    {
+        if (!isset($search['limit']) || $search['limit'] == '') {
+            $search['limit'] = 10;
         }
 
-        $this->clienteMapper->delete($cliente);
+        if (!isset($search['page']) || $search['page'] == '' || $search['page'] == 0 || !is_numeric($search['page'])) {
+            $search['page'] = 1;
+        }
 
-        return ['success' => 'O cliente foi deletado com sucesso.'];
+        $repo = $this->em->getRepository('JSRO\Sistema\Entity\Cliente');
+        $data = [
+            'data' => $repo->getSearchResultDql($search),
+            'info' => $repo->getTotalNumSearch($search)
+            ];
+
+        return $data;
     }
+
 } 
