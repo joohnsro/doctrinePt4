@@ -5,28 +5,37 @@ namespace JSRO\Sistema\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass="JSRO\Sistema\Entity\ClienteRepository")
- * @ORM\Table(name="clientes")
+ * @ORM\Entity
+ * @ORM\Table(name="categorias")
  */
-
-class Cliente
+class Categoria
 {
+
     /**
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue
      */
-    public $id;
+    private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    public $nome;
+    private $nome;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\OneToMany(targetEntity="JSRO\Sistema\Entity\Produto", mappedBy="categorias")
+     * @ORM\JoinColumn(name="produto_id", referencedColumnName="id")
+     **/
+    private $produto;
+
+    /**
+     * @param mixed $id
      */
-    public $email;
+    public function setId($id)
+    {
+        $this->id = $id;
+    }
 
     /**
      * @return mixed
@@ -34,22 +43,6 @@ class Cliente
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * @param mixed $email
-     */
-    public function setEmail($email)
-    {
-        $this->email = $email;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getEmail()
-    {
-        return $this->email;
     }
 
     /**
