@@ -27,12 +27,14 @@ class ProdutoService
         }
 
         if (isset($data['tags'])) {
-            $tags = explode(",", $data['tags']);
-
-            foreach ($tags as $tag) {
+            foreach ($data['tags'] as $tag) {
                 $tagEntity = $this->em->getReference("JSRO\Sistema\Entity\Tag", $tag);
                 $produtoEntity->addTag($tagEntity);
             }
+        }
+
+        if (isset($data['imagem'])) {
+            $produtoEntity->addImagens($data['imagem']);
         }
 
         $this->em->persist($produtoEntity);

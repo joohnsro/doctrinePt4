@@ -1,0 +1,26 @@
+{% extends 'layout.twig' %}
+
+{% form_theme form 'bootstrap_3_horizontal_3to9_layout.html.twig' %}
+
+{% block title %}
+    <h1>Produto</h1>
+{% endblock %}
+
+{% block conteudoWrapper %}
+    <div class="row">
+        <div class="col-md-offset-3 col-md-6">
+
+            {% for flashMessage in app.session.flashbag.get('success') %}
+                <div class="alert alert-success">
+                    <img src="{{ app.request.basepath }}/midia/{{ flashMessage.imagem }}" height="50">&nbsp;&nbsp;&nbsp;
+                    <strong>{{ flashMessage.nome }} - </strong> {{ flashMessage.message }}
+                </div>
+            {% endfor %}
+
+            <form action="{{ path('addProduto') }}" method="post" {{ form_enctype(form) }} class="form-horizontal">
+                {{ form_widget(form) }}
+                <input type="submit" name="enviar" class="btn btn-primary" />
+            </form>
+        </div>
+    </div>
+{% endblock %}

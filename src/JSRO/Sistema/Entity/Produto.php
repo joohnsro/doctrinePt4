@@ -53,14 +53,36 @@ class Produto
      */
     private $tags;
 
+    /**
+     * @ORM\ManyToMany(targetEntity="JSRO\Sistema\Entity\Image")
+     * @ORM\JoinTable(name="produtos_imagens",
+     *      joinColumns={@ORM\JoinColumn(name="produto_id", referencedColumnName="id")},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="imagen_id", referencedColumnName="id")}
+     *      )
+     */
+    private $imagens;
+
     public function __construct()
     {
         $this->tags = new ArrayCollection();
+        $this->imagens = new ArrayCollection();
     }
 
-    /**
-     * @param mixed $tags
-     */
+    public function addImagens($imagens)
+    {
+        $this->imagens->add($imagens);
+    }
+
+    public function getImagens()
+    {
+        return $this->imagens;
+    }
+
+    public function clearImagens()
+    {
+        return $this->imagens->clear();
+    }
+
     public function addTag($tag)
     {
         $this->tags->add($tag);
@@ -76,7 +98,7 @@ class Produto
 
     public function clearTags()
     {
-        return $this->tags->clear();
+        $this->tags->clear();
     }
 
     /**
