@@ -5,7 +5,7 @@ require_once __DIR__ . '/../bootstrap.php';
 use JSRO\Sistema\Service\ProdutoService;
 use JSRO\Sistema\Service\CategoriaService;
 use JSRO\Sistema\Service\TagService;
-use JSRO\Sistema\Service\ImageService;
+use JSRO\Sistema\Service\ImagemService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -24,9 +24,9 @@ $app['tagService'] = function () use ($em) {
     return $tagService;
 };
 
-$app['imageService'] = function () use ($em) {
-    $imageService = new ImageService($em);
-    return $imageService;
+$app['imagemService'] = function () use ($em) {
+    $imagemService = new ImagemService($em);
+    return $imagemService;
 };
 
 $app->get("/api/produtos", function () use ($app) {
@@ -246,8 +246,8 @@ $app->delete("/api/tags/{id}", function ($id) use ($app) {
     return $app->json($result);
 });
 
-$app->get("/api/images", function () use ($app) {
-    $dados = $app['imageService']->fetchAll();
+$app->get("/api/imagens", function () use ($app) {
+    $dados = $app['imagemService']->fetchAll();
     $data = [];
 
     foreach ($dados as $dado) {
@@ -262,8 +262,8 @@ $app->get("/api/images", function () use ($app) {
     return $app->json($data);
 });
 
-$app->get("/api/images/{id}", function ($id) use ($app) {
-    $dados = $app['imageService']->find($id);
+$app->get("/api/imagens/{id}", function ($id) use ($app) {
+    $dados = $app['imagemService']->find($id);
 
     $data = [
         'id' => $dados->getId(),
@@ -276,14 +276,14 @@ $app->get("/api/images/{id}", function ($id) use ($app) {
     return $app->json($data);
 });
 
-$app->post("/api/images", function (Request $request) use ($app) {
+$app->post("/api/imagens", function (Request $request) use ($app) {
     $dados['nome'] = $request->get('nome');
     $dados['titulo'] = $request->get('titulo');
     $dados['descricao'] = $request->get('descricao');
     $dados['mimeType'] = $request->get('mimeType');
     $dados['fileSize'] = $request->get('fileSize');
 
-    $result = $app['imageService']->insert($dados);
+    $result = $app['imagemService']->insert($dados);
 
     $data['id'] = $result->getId();
     $data['nome'] = $result->getNome();
@@ -315,11 +315,11 @@ $app->match("/", function (Request $request) use ($app) {
         ->add('valor', 'text', array('label' => 'Valor'))
         ->add('categoria', 'choice', array('label' => 'Categoria', 'choices' => $catChoices))
         ->add('tags', 'choice', array('label' => 'Tags', 'choices' => $tagChoices, 'multiple' => true))
-        ->add('image', 'file', array(
+        ->add('imagem', 'file', array(
             'label' => "Foto",
             'attr' => array('class' => 'form-control'),
             'constraints' => array(new Assert\Image([
-                "maxSize" => "5000M",
+                "maxSize" => "5M",
                 "maxSizeMessage" => "A imagem é grande demais, ela pode pesar apenas 5Mb.",
                 "mimeTypes" => ["image/jpeg", "image/png"],
                 "mimeTypesMessage" => "Por favor, insira uma imagem apenas nos formatos JPG e PNG.",
@@ -338,11 +338,11 @@ $app->match("/", function (Request $request) use ($app) {
         $dados['categoria'] = $formData['categoria'];
         $dados['tags'] = $formData['tags'];
 
-        if (isset($formData['image'])) {
-            $dados['imagem'] = $app['imageService']->insert([
+        if (isset($formData['imagem'])) {
+            $dados['imagem'] = $app['imagemService']->insert([
                 'titulo' => '',
                 'descricao' => '',
-                'file' => $formData['image']
+                'file' => $formData['imagem']
             ]);
         }
 
@@ -361,13 +361,16 @@ $app->match("/", function (Request $request) use ($app) {
             ];
         }
 
-        foreach ($result->getImagens() as $image) {
-            $data['images'][] = $image->getNome();
+        foreach ($result->getImagens() as $imagem) {
+            $data['imagem'][] = [
+                'id' => $imagem->getId(),
+                'nome' => $imagem->getNome()
+            ];
         }
 
         $app['session']->getFlashBag()->add('success', [
             'nome' => $data['nome'],
-            'imagem' => $data['images'][0],
+            'imagem' => $data['imagem'][0]['nome'],
             'message' => 'Produto cadastrado com sucesso.'
         ]);
 

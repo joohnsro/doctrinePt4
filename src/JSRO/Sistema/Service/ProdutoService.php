@@ -34,7 +34,7 @@ class ProdutoService
         }
 
         if (isset($data['imagem'])) {
-            $produtoEntity->addImagens($data['imagem']);
+            $produtoEntity->addImagem($data['imagem']);
         }
 
         $this->em->persist($produtoEntity);

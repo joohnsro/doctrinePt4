@@ -8,9 +8,9 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
- * @ORM\Table(name="images")
+ * @ORM\Table(name="imagens")
  */
-class Image
+class Imagem
 {
     /**
      * @ORM\Id
@@ -147,6 +147,5 @@ class Image
     {
         return $this->titulo;
     }
-
 
 }

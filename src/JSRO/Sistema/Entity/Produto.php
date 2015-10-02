@@ -34,10 +34,6 @@ class Produto
      */
     private $valor;
 
-//    /**
-//     * @ORM\OneToMany(targetEntity="JSRO\Sistema\Entity\Categoria", mappedBy="categorias")
-//     * @ORM\JoinColumn(name="categoria_id", referencedColumnName="id")
-//     */
     /**
      * @ORM\ManyToOne(targetEntity="Categoria", inversedBy="produtos")
      * @ORM\JoinColumn(name="categoria_id", referencedColumnName="id")
@@ -54,10 +50,10 @@ class Produto
     private $tags;
 
     /**
-     * @ORM\ManyToMany(targetEntity="JSRO\Sistema\Entity\Image")
+     * @ORM\ManyToMany(targetEntity="JSRO\Sistema\Entity\Imagem")
      * @ORM\JoinTable(name="produtos_imagens",
      *      joinColumns={@ORM\JoinColumn(name="produto_id", referencedColumnName="id")},
-     *      inverseJoinColumns={@ORM\JoinColumn(name="imagen_id", referencedColumnName="id")}
+     *      inverseJoinColumns={@ORM\JoinColumn(name="imagem_id", referencedColumnName="id")}
      *      )
      */
     private $imagens;
@@ -68,11 +64,14 @@ class Produto
         $this->imagens = new ArrayCollection();
     }
 
-    public function addImagens($imagens)
+    public function addImagem($imagem)
     {
-        $this->imagens->add($imagens);
+        $this->imagens->add($imagem);
     }
 
+    /**
+     * @return mixed
+     */
     public function getImagens()
     {
         return $this->imagens;
@@ -80,7 +79,7 @@ class Produto
 
     public function clearImagens()
     {
-        return $this->imagens->clear();
+        $this->imagens->clear();
     }
 
     public function addTag($tag)

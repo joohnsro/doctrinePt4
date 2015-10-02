@@ -24,10 +24,10 @@ class Categoria
     private $nome;
 
     /**
-     * @ORM\OneToMany(targetEntity="JSRO\Sistema\Entity\Produto", mappedBy="categorias")
+     * @ORM\OneToMany(targetEntity="JSRO\Sistema\Entity\Produto", mappedBy="categoria")
      * @ORM\JoinColumn(name="produto_id", referencedColumnName="id")
      **/
-    private $produto;
+    private $produtos;
 
     /**
      * @param mixed $id
